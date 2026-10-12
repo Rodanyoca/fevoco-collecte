@@ -32,6 +32,12 @@ Ouvrir **http://127.0.0.1:4174/**. Après la première ouverture en ligne, atten
 - Aperçu Excel et PDF accessible par « Voir les modèles Excel et PDF ».
 - Style institutionnel FEVOCO repris : logo local, bleu marine, actions bleues et accent or ; interface adaptée au téléphone.
 
+## Navigation mobile
+
+Quatre onglets restent accessibles en bas : **Accueil** (effectifs, ajout et exports), **Acteurs** (liste et filtre par type), **Recherche** (recherche directe et filtre) et **Param?tres** (nom du club, stockage et installation). Les exports sont regroup?s sur l?accueil. La s?lection export?e reprend les crit?res de l?onglet Recherche ; le filtre de la liste Acteurs reste ind?pendant.
+
+Voir [le rapport de navigation mobile](docs/navigation-mobile.md).
+
 ## Stockage et fonctionnement hors ligne
 
 IndexedDB contient deux magasins : `config` pour le nom du club et `people` pour les fiches. La clé interne ne paraît ni dans les interfaces visibles ni dans les exports. Les écritures sont confirmées seulement à la fin de la transaction IndexedDB. Un échec de stockage laisse le formulaire disponible ; aucune sauvegarde en mémoire n’est présentée comme durable.
