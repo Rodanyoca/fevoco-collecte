@@ -72,7 +72,7 @@ test('parcours complet : cache, CRUD hors ligne, fermeture, exports et mise à j
   await addPerson(page,{name:'André N’Kulu',type:'Entraîneur',sex:'Masculin',affiliation:'05092023',birth:'',phone:'00243 089 000 1122'});
   await navigate(page,'Recherche');
   await page.getByLabel('Rechercher une personne').fill('elodie');
-  await expect(page.locator('.people li')).toHaveCount(1);
+  await expect(page.locator('.actor-table tbody tr')).toHaveCount(1);
   await page.getByLabel('Type d’acteur',{exact:true}).selectOption('Médecin');
   await expect(page.getByText('Aucun résultat',{exact:true})).toBeVisible();
   await page.getByRole('button',{name:'Effacer les filtres',exact:true}).click();
@@ -118,7 +118,7 @@ test('parcours complet : cache, CRUD hors ligne, fermeture, exports et mise à j
   await expect(page.locator('#connectivity')).toHaveText('Hors ligne · prête');
   await expect(page.getByRole('heading',{name:'Club Étoile',exact:true})).toBeVisible();
   await navigate(page,'Acteurs');
-  await expect(page.locator('.people li')).toHaveCount(2);
+  await expect(page.locator('.actor-table tbody tr')).toHaveCount(2);
   await navigate(page,'Accueil');
   await download(page,'Exporter en Excel · toutes les fiches',info.outputPath('reouverture.xlsx'));
   await download(page,'Exporter en PDF · toutes les fiches',info.outputPath('reouverture.pdf'));
@@ -138,7 +138,7 @@ test('parcours complet : cache, CRUD hors ligne, fermeture, exports et mise à j
   await navigation;
   await expect(page.locator('#connectivity')).toHaveText('Prête hors ligne');
   await navigate(page,'Acteurs');
-  await expect(page.locator('.people li')).toHaveCount(2);
+  await expect(page.locator('.actor-table tbody tr')).toHaveCount(2);
   await navigate(page,'Accueil');
   const afterKeys=await page.evaluate(async()=>{
     const db=await new Promise(resolve=>{const r=indexedDB.open('fevoco-collecte');r.onsuccess=()=>resolve(r.result);});
@@ -152,11 +152,11 @@ test('parcours complet : cache, CRUD hors ligne, fermeture, exports et mise à j
   await navigate(page,'Acteurs');
   await page.getByRole('button',{name:'Supprimer la fiche de André N’Kulu',exact:true}).click();
   await page.getByRole('dialog').getByRole('button',{name:'Annuler',exact:true}).click();
-  await expect(page.locator('.people li')).toHaveCount(2);
+  await expect(page.locator('.actor-table tbody tr')).toHaveCount(2);
   await page.getByRole('button',{name:'Supprimer la fiche de André N’Kulu',exact:true}).click();
   await page.getByRole('dialog').getByRole('button',{name:'Supprimer la fiche',exact:true}).click();
-  await expect(page.locator('.people li')).toHaveCount(1);
-  await page.reload();await navigate(page,'Acteurs');await expect(page.locator('.people li')).toHaveCount(1);
+  await expect(page.locator('.actor-table tbody tr')).toHaveCount(1);
+  await page.reload();await navigate(page,'Acteurs');await expect(page.locator('.actor-table tbody tr')).toHaveCount(1);
   await navigate(page,'Accueil');
   const finalXlsx=await download(page,'Exporter en Excel · toutes les fiches',info.outputPath('apres-mise-a-jour.xlsx'));
   const finalBook=new ExcelJS.Workbook();await finalBook.xlsx.load(await readFile(finalXlsx));

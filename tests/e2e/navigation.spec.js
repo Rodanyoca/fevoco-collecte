@@ -20,7 +20,7 @@ test('navigation mobile : quatre sections, recherche conservée, exports sur acc
  await page.getByLabel('Date d’affiliation au club',{exact:false}).fill('17082024');
  await page.getByRole('button',{name:'Enregistrer la fiche',exact:true}).click();
  await expect(menu(page).getByRole('button',{name:'Acteurs',exact:true})).toHaveAttribute('aria-current','page');
- await expect(page.locator('.people li')).toHaveCount(1);
+ await expect(page.locator('.actor-table tbody tr')).toHaveCount(1);
  await expect(page.locator('[data-action="excel"]')).toHaveCount(0);
  await expect(page.getByLabel('Rechercher une personne')).toHaveCount(0);
  await page.screenshot({path:info.outputPath('acteurs-mobile.png')});
@@ -29,7 +29,7 @@ test('navigation mobile : quatre sections, recherche conservée, exports sur acc
  await tab(page,'Recherche');
  const search=page.getByLabel('Rechercher une personne');
  await expect(search).toBeFocused();
- await expect(page.locator('.people li')).toHaveCount(1);
+ await expect(page.locator('.actor-table tbody tr')).toHaveCount(1);
  await search.fill('elodie');
  await expect(search).toBeFocused();
  await page.getByLabel('Type d’acteur',{exact:true}).selectOption('Athlète');
