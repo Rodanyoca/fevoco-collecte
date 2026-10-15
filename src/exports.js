@@ -1,7 +1,7 @@
 import ExcelJS from 'exceljs';
 import { jsPDF } from 'jspdf';
 import { autoTable } from 'jspdf-autotable';
-import { FIELDS, displayDate, excelDate } from './model.js';
+import { FIELDS, displayDate, excelDate, groupPeopleByType } from './model.js';
 export const HEADERS = ['Nom du club', ...FIELDS.map(([, label]) => label)];
 export async function createWorkbook(club, people) {
   const book = new ExcelJS.Workbook();
@@ -57,11 +57,12 @@ export async function createPdf(club, people, scope, fonts = null, generated = n
   pdf.setFontSize(13); pdf.text('Registre d’identification des acteurs',12,titleY);
   pdf.setFont('NotoSans','normal'); pdf.setFontSize(9);
   pdf.text('FEVOCO · '+scope+' · Généré le '+generated.toLocaleDateString('fr-FR'),12,titleY+7);
+  for (const group of groupPeopleByType(people)) {
   autoTable(pdf,{
-    startY:titleY+13, margin:{top:16,right:12,bottom:16,left:12},
+    startY:pdf.lastAutoTable ? pdf.lastAutoTable.finalY+8 : titleY+13, margin:{top:16,right:12,bottom:16,left:12},
     rowPageBreak:'avoid',
-    head:[FIELDS.map(([,label])=>label)],
-    body:people.map(p => FIELDS.map(([key])=>key.endsWith('Date')?displayDate(p[key]):p[key]||'')),
+    head:[[{content:group.type+' ('+group.people.length+')',colSpan:FIELDS.length,styles:{fillColor:[230,238,245],textColor:[18,54,83]}}],FIELDS.map(([,label])=>label)],
+    body:group.people.map(p => FIELDS.map(([key])=>key.endsWith('Date')?displayDate(p[key]):p[key]||'')),
     styles:{font:'NotoSans',fontStyle:'normal',fontSize:9,cellPadding:2.5,overflow:'linebreak',valign:'top',lineWidth:0.15,lineColor:[215,224,233]},
     headStyles:{fillColor:[18,54,83],fontStyle:'bold',textColor:[255,255,255]},
     alternateRowStyles:{fillColor:[243,247,250]},theme:'grid',showHead:'everyPage',
@@ -74,6 +75,7 @@ export async function createPdf(club, people, scope, fonts = null, generated = n
       }
     },
   });
+  }
   const total = pdf.getNumberOfPages();
   for(let page=1;page<=total;page++) {
     pdf.setPage(page);pdf.setFont('NotoSans','normal');pdf.setFontSize(8);pdf.setTextColor(70,85,100);

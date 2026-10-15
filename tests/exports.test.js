@@ -5,7 +5,7 @@ import ExcelJS from 'exceljs';
 import {createWorkbook,createPdf,HEADERS} from '../src/exports.js';
 const person={key:'secret-internal-key',name:'Élodie Mbuyi',type:'Athlète',sex:'Féminin',birthDate:'2000-02-29',affiliationDate:'2024-08-17',phone:'00243 0812345678',email:'',address:'Avenue de l’Équateur'};
 test('XLSX réel, dates typées, téléphone texte, aucun identifiant',async()=>{
- const buffer=await createWorkbook('Club Étoile',[person,{...person,name:'=1+1',birthDate:'',phone:'+243 (0) 81'}]);
+ const buffer=await createWorkbook('Club Étoile',[person,{...person,name:'=1+1',birthDate:'',affiliationDate:'',phone:'+243 (0) 81'}]);
  const book=new ExcelJS.Workbook();await book.xlsx.load(buffer);
  assert.deepEqual(book.worksheets.map(s=>s.name),['CLUB','ACTEURS']);
  assert.equal(book.getWorksheet('CLUB').getCell('A2').value,'Club Étoile');
@@ -18,6 +18,7 @@ test('XLSX réel, dates typées, téléphone texte, aucun identifiant',async()=>
  assert.equal(sheet.getCell('H2').numFmt,'@');
  assert.equal(sheet.getCell('C3').value,'=1+1');assert.equal(sheet.getCell('C3').type,ExcelJS.ValueType.String);
  assert.equal(sheet.getCell('E3').value,null);
+ assert.equal(sheet.getCell('F3').value,null);
  assert.ok(!JSON.stringify(sheet.getSheetValues()).includes(person.key));
 });
 test('XLSX vide',async()=>{

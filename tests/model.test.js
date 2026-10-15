@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {parseDate,compactDate,validatePerson,filterPeople,exportRows,excelDate} from '../src/model.js';
+import {parseDate,compactDate,validatePerson,filterPeople,exportRows,excelDate,groupPeopleByType,ACTOR_TYPES} from '../src/model.js';
 const input={name:'Élodie Mbuyi',type:'Athlète',sex:'Féminin',affiliationDate:'17/08/2024',birthDate:'29/02/2000',phone:'+243 081 000 001'};
 test('dates civiles et saisie compacte',()=>{
  assert.equal(compactDate('17082024'),'17/08/2024');
@@ -11,11 +11,11 @@ test('dates civiles et saisie compacte',()=>{
  assert.equal(parseDate('00/12/2024'),null);assert.equal(parseDate('01/13/2024'),null);
  assert.equal(parseDate('29/02/2000').toISOString(),'2000-02-29T00:00:00.000Z');
 });
-test('affiliation obligatoire et distincte, facultatifs vides, téléphone texte',()=>{
+test('affiliation facultative et distincte, facultatifs vides, téléphone texte',()=>{
  const result=validatePerson(input);assert.deepEqual(result.errors,{});
  assert.equal(result.data.affiliationDate,'2024-08-17');assert.equal(result.data.phone,input.phone);
  assert.equal(result.data.email,'');
- const blank=validatePerson({...input,affiliationDate:''});assert.ok(blank.errors.affiliationDate);assert.equal(blank.data.affiliationDate,'');
+ const blank=validatePerson({...input,affiliationDate:''});assert.deepEqual(blank.errors,{});assert.equal(blank.data.affiliationDate,'');
  for(const key of ['name','type','sex']) assert.ok(validatePerson({...input,[key]:''}).errors[key]);
  assert.ok(validatePerson({...input,affiliationDate:'31/02/2024'}).errors.affiliationDate);
  assert.ok(validatePerson({...input,affiliationDate:'01/01/1990'}).errors.affiliationDate);
@@ -29,4 +29,13 @@ test('recherche sans accents, filtre combiné, export sans clé interne',()=>{
  const rows=exportRows(people,'Club');assert.equal(rows[0][5],'17/08/2024');
  assert.equal(JSON.stringify(rows).includes('private-key'),false);
  assert.equal(excelDate('2024-08-17').toISOString(),'2024-08-17T00:00:00.000Z');
+});
+
+test('PDF groups by actor category then sorts names without mutating records',()=>{
+ const people=[{name:'Zola',type:ACTOR_TYPES[1]},{name:'Zoe',type:ACTOR_TYPES[0]},{name:'Alice',type:ACTOR_TYPES[0]}];
+ const groups=groupPeopleByType(people);
+ assert.deepEqual(groups.map(g=>g.type),ACTOR_TYPES.slice(0,2));
+ assert.deepEqual(groups[0].people.map(p=>p.name),['Alice','Zoe']);
+ assert.equal(people[0].name,'Zola');
+ assert.deepEqual(groupPeopleByType([]),[]);
 });

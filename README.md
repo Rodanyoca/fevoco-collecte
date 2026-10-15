@@ -23,7 +23,7 @@ Ouvrir **http://127.0.0.1:4174/**. Après la première ouverture en ligne, atten
 - Liste compacte, recherche insensible aux accents sur nom/téléphone/e-mail et filtre par type.
 - Création, consultation, modification, suppression avec confirmation.
 - Types : Athlète, Entraîneur, Médecin, Officiel, Arbitre, Autre.
-- Obligatoires : nom complet, type, sexe, date d’affiliation au club.
+- Obligatoires : nom complet, type et sexe. La date d’affiliation au club est facultative.
 - Facultatifs : naissance, adresse, téléphone et e-mail.
 - Date d’affiliation initialement vide ; aucune confusion avec une date de création.
 - Saisie des dates en chiffres avec formatage JJ/MM/AAAA, validation des dates civiles et années bissextiles. Naissance non future et affiliation non antérieure à une naissance renseignée.
@@ -62,6 +62,8 @@ Véritable `.xlsx` généré localement par ExcelJS :
 Le périmètre « Toutes les fiches » ou « Sélection filtrée » est affiché dans les boutons, avec le nombre de fiches, et repris dans le nom du fichier.
 
 ## Export PDF
+
+Acteurs regroupés par type, puis triés par nom dans chaque catégorie. Les titres de catégorie et les en-têtes sont répétés sur les pages suivantes.
 
 Génération locale par jsPDF et AutoTable, sans service externe. Noto Sans régulier et gras sont embarqués pour les accents.
 

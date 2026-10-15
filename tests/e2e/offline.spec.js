@@ -47,7 +47,7 @@ test('parcours complet : cache, CRUD hors ligne, fermeture, exports et mise à j
   await expect(page.locator('#connectivity')).toHaveText('Hors ligne · prête');
   await page.getByRole('button',{name:'Ajouter une personne',exact:true}).click();
   await page.getByRole('button',{name:'Enregistrer la fiche',exact:true}).click();
-  await expect(page.locator('#name-error')).toBeVisible();await expect(page.locator('#affiliationDate-error')).toBeVisible();
+  await expect(page.locator('#name-error')).toBeVisible();await expect(page.locator('#affiliationDate-error')).toBeHidden();
   await page.getByLabel('Nom complet',{exact:false}).fill('Élodie Mbuyi');
   await page.getByLabel('Type d’acteur',{exact:false}).selectOption('Athlète');
   await page.getByLabel('Sexe',{exact:false}).selectOption('Féminin');

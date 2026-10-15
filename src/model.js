@@ -26,12 +26,11 @@ export function validatePerson(input) {
   if (!data.name) errors.name = 'Renseignez le nom complet.';
   if (data.name.length > 200) errors.name = 'Le nom est limité à 200 caractères.';
   if (!SEXES.includes(data.sex)) errors.sex = 'Choisissez le sexe.';
-  if (!data.affiliationDate) errors.affiliationDate = 'Renseignez la date d’affiliation au club.';
   for (const key of ['birthDate', 'affiliationDate']) {
     if (data[key] && !parseDate(data[key])) errors[key] = 'Saisissez une date réelle au format JJ/MM/AAAA (1900 à 2200).';
   }
   if (!errors.birthDate && data.birthDate && toISO(data.birthDate) > new Date().toISOString().slice(0, 10)) errors.birthDate = 'La naissance ne peut pas être dans le futur.';
-  if (!errors.birthDate && !errors.affiliationDate && data.birthDate && toISO(data.affiliationDate) < toISO(data.birthDate)) errors.affiliationDate = 'L’affiliation ne peut pas précéder la naissance.';
+  if (!errors.birthDate && !errors.affiliationDate && data.birthDate && data.affiliationDate && toISO(data.affiliationDate) < toISO(data.birthDate)) errors.affiliationDate = 'L’affiliation ne peut pas précéder la naissance.';
   if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) errors.email = 'Renseignez une adresse e-mail valide ou laissez ce champ vide.';
   for (const [key, max] of [['address',1000],['phone',80],['email',254]]) if (data[key].length > max) errors[key] = 'Ce champ est trop long.';
   return { errors, data: {...data, birthDate: toISO(data.birthDate), affiliationDate: toISO(data.affiliationDate)} };
@@ -47,4 +46,8 @@ export function exportRows(people, club) {
 export function fileName(club, scope, extension) {
   const safe = club.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,'').slice(0,60) || 'club';
   return 'FEVOCO-' + safe + '-' + scope + '.' + extension;
+}
+
+export function groupPeopleByType(people) {
+  return ACTOR_TYPES.map(type => ({ type, people: people.filter(person => person.type === type).sort((a,b) => a.name.localeCompare(b.name, 'fr', { sensitivity: 'base', numeric: true })) })).filter(group => group.people.length);
 }
